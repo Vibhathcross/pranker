@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Access Gateway</title>
     <style>
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
             background: #f0f2f5;
             height: 100vh;
             width: 100vw;
-            /* Prevent double-tap zoom on mobile so they can tap fast! */
-            touch-action: manipulation; 
+            touch-action: manipulation;
         }
 
-        .hidden { display: none !important; }
+        .hidden {
+            display: none !important;
+        }
 
-        /* --- PHASE 1: THE BAIT --- */
+        /* --- PHASE 1: THE BAIT (Professional UI) --- */
         #bait-screen {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #333;
             padding: 20px;
         }
@@ -34,11 +36,27 @@
         .verify-box {
             background: white;
             padding: 40px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             text-align: center;
             max-width: 400px;
-            width: 90%;
+            width: 95%;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #0056b3;
         }
 
         button {
@@ -47,35 +65,66 @@
             border: none;
             padding: 15px 30px;
             font-size: 18px;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: 0.2s;
-            margin-top: 20px;
+            transition: 0.3s;
             font-weight: bold;
             width: 100%;
         }
 
-        button:hover { background: #004494; }
+        button:hover {
+            background: #004494;
+            transform: translateY(-2px);
+        }
 
         /* --- PHASE 2: THE HACKER TERMINAL --- */
         #hacker-overlay {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background: #050505;
             color: #0f0;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 999;
-            text-shadow: 0 0 5px #0f0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* The chaotic screen flash when terminal opens */
+        .flash-bang {
+            animation: screenFlash 0.4s ease-out;
+        }
+
+        @keyframes screenFlash {
+            0% {
+                background: #ffffff;
+                filter: invert(1);
+            }
+
+            20% {
+                background: #ff0000;
+            }
+
+            40% {
+                background: #00ff00;
+                filter: invert(0);
+            }
+
+            100% {
+                background: #050505;
+            }
         }
 
         #hacker-overlay::after {
-            content: " ";
-            display: block;
+            content: "";
             position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
             background-size: 100% 4px;
             z-index: 2;
@@ -88,6 +137,64 @@
             z-index: 3;
             font-size: 1.1rem;
             line-height: 1.5;
+            position: relative;
+        }
+
+        /* --- THE GLITCH ENTRANCE (More violent) --- */
+        .glitch-entrance {
+            animation: terminalGlitch 0.8s cubic-bezier(.25, .46, .45, .94) both;
+        }
+
+        @keyframes terminalGlitch {
+            0% {
+                transform: scale(1.5) skewX(20deg) translateY(-50px);
+                filter: invert(1) hue-rotate(90deg);
+                opacity: 0;
+                text-shadow: 10px 0 0 red, -10px 0 0 blue;
+            }
+
+            10% {
+                transform: scale(0.8) skewX(-20deg) translateY(50px);
+                filter: invert(0);
+                opacity: 1;
+            }
+
+            20% {
+                transform: translate(-20px, 10px) skewX(40deg);
+                filter: blur(2px);
+                text-shadow: -5px 5px 0 red, 5px -5px 0 blue;
+            }
+
+            30% {
+                transform: translate(20px, -10px) skewX(-40deg);
+                filter: blur(0px) invert(1);
+            }
+
+            40% {
+                transform: scale(1.1) translate(0, 0) skewX(10deg);
+                filter: none;
+            }
+
+            50% {
+                transform: scale(1) skewX(-10deg);
+                filter: invert(0);
+                opacity: 1;
+            }
+
+            70% {
+                transform: translate(15px, 8px) skewX(5deg);
+            }
+
+            80% {
+                transform: translate(-10px, -5px) skewX(-5deg);
+            }
+
+            100% {
+                transform: scale(1) skew(0);
+                filter: none;
+                opacity: 1;
+                text-shadow: none;
+            }
         }
 
         .progress-container {
@@ -103,21 +210,15 @@
             height: 100%;
             background: #0f0;
             transition: width 0.1s linear;
-            box-shadow: 0 0 15px #0f0;
         }
 
-        .cursor { animation: blink 1s infinite; }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* --- PHASE 3: THE REVEAL --- */
+        /* --- PHASE 3: THE REVEAL (Jump Scare) --- */
         #reveal-screen {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background: black;
             color: white;
             text-align: center;
@@ -128,23 +229,27 @@
             z-index: 1000;
             animation: alarmPulse 1.5s infinite;
             padding: 20px;
-            box-sizing: border-box; /* Keeps padding inside the screen bounds */
+            box-sizing: border-box;
         }
 
         @keyframes alarmPulse {
-            0% { background: radial-gradient(circle, #4a0000, #000); }
-            50% { background: radial-gradient(circle, #8a0000, #110000); }
-            100% { background: radial-gradient(circle, #4a0000, #000); }
+            0% {
+                background: #300;
+            }
+
+            50% {
+                background: #600;
+            }
+
+            100% {
+                background: #300;
+            }
         }
 
         #reveal-screen h1 {
-            font-size: clamp(2rem, 11vw, 4rem); /* Responsive font size */
+            font-size: clamp(2rem, 11vw, 4rem);
             color: #ff3333;
             text-shadow: 0 0 20px red;
-            margin-bottom: 10px;
-            font-family: 'Segoe UI', sans-serif;
-            width: 100%;
-            overflow-wrap: break-word; /* Prevents long words from breaking the layout */
         }
 
         #glitch-box {
@@ -152,15 +257,13 @@
             padding: 20px 30px;
             border: 3px solid cyan;
             color: cyan;
-            font-size: clamp(1rem, 5vw, 1.5rem);
             font-weight: bold;
             cursor: pointer;
             margin-top: 50px;
             text-transform: uppercase;
-            background: rgba(0, 255, 255, 0.1);
         }
 
-        #glitch-box:hover, #glitch-box:active {
+        #glitch-box:hover {
             animation: shake 0.1s infinite;
             background: red;
             color: white;
@@ -168,231 +271,344 @@
         }
 
         @keyframes shake {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(5px, -5px); }
-            50% { transform: translate(-5px, 5px); }
-            100% { transform: translate(0, 0); }
+            0% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(5px, -5px);
+            }
+
+            50% {
+                transform: translate(-5px, 5px);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        /* --- PHASE 4 & 5: FINAL OUTCOMES --- */
+        .final-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #invoice-screen {
+            background: #e9ecef;
+        }
+
+        #funny-screen {
+            background: #fff3cd;
+            overflow: hidden;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            z-index: 2010;
+            /* Keep card above emojis */
+        }
+
+        .invoice-card {
+            border-top: 10px solid #28a745;
+        }
+
+        .funny-card {
+            border-top: 10px solid #ffc107;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .invoice-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .discount {
+            color: #dc3545;
+            font-style: italic;
+        }
+
+        .reload-btn {
+            margin-top: 30px;
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .reload-green {
+            background: #28a745;
+        }
+
+        .reload-orange {
+            background: #ff8c00;
+        }
+
+        /* --- EMOJI RAIN --- */
+        .falling-smile {
+            position: absolute;
+            top: -10vh;
+            user-select: none;
+            pointer-events: none;
+            z-index: 2005;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div id="bait-screen">
         <div class="verify-box">
-            <h2 id="bait-text">Human Verification Required 🤖</h2>
-            <p>Please click the button below to access the secure portfolio.</p>
-            <button id="start-btn">Verify & Enter</button>
+            <h2>System Validation 🤖</h2>
+            <p>Enter your full name to unlock the secure gateway.</p>
+            <input type="text" id="user-name-input" placeholder="Full Name..." autocomplete="off">
+            <button id="start-btn">Unlock Gateway</button>
         </div>
     </div>
 
     <div id="hacker-overlay" class="hidden">
-        <div class="terminal">
+        <div class="terminal glitch-entrance">
             <div id="terminal-output"></div>
-            <span class="cursor">█</span>
             <div id="progress-wrapper" class="hidden">
                 <div class="progress-container">
                     <div id="progress-bar"></div>
                 </div>
-                <div id="status-msg" style="margin-top: 15px; font-weight: bold; font-size: 1.2rem;"></div> 
+                <div id="status-msg" style="margin-top: 15px; font-weight: bold;"></div>
             </div>
         </div>
     </div>
 
     <div id="reveal-screen" class="hidden">
-        <h1>SYSTEM COMPROMISED 💀</h1>
-        <p style="font-size: 1rem; font-family: monospace; color: #ccc;">Critical failure. All personal directories have been encrypted and uploaded. 😈</p>
-        
-        <div id="glitch-box">
-            Initiate Emergency Recovery ☢️
+        <h1>ACCESS DENIED 💀</h1>
+        <p>A fatal security breach has occurred. Local files are being extracted.</p>
+        <div id="glitch-box">STOP EXTRACTION ☢️</div>
+    </div>
+
+    <div id="invoice-screen" class="final-screen hidden">
+        <div class="card invoice-card">
+            <h2>RECOVERY RECEIPT</h2>
+            <div class="invoice-row"><span>Client:</span><span id="inv-name"></span></div>
+            <div class="invoice-row"><span>Service:</span><span>Security Recovery</span></div>
+            <div class="invoice-row"><span>Cost:</span><span>$4,999.00</span></div>
+            <div class="invoice-row discount"><span>April Fools Disc:</span><span>-$4,999.00</span></div>
+            <div class="invoice-row" style="font-weight:bold"><span>Total:</span><span>1 Cup of Coffee ☕</span></div>
+            <p>You found the secret bypass. System restored.</p>
+            <button class="reload-btn reload-green" onclick="location.reload()">Finish</button>
+        </div>
+    </div>
+
+    <div id="funny-screen" class="final-screen hidden">
+        <div class="card funny-card">
+            <h2 style="font-size: 3rem;">🤡</h2>
+            <h1>GOTCHA, <span id="fun-name"></span>!</h1>
+            <p style="font-size: 1.1rem; margin: 20px 0;">Don't worry, your device is perfectly safe. It was just an
+                April Fools' joke!</p>
+            <button class="reload-btn reload-orange" onclick="location.reload()">I Forgive You</button>
         </div>
     </div>
 
     <script>
-        // --- AUDIO ENGINE ---
-        let audioCtx;
-        let alarmInterval;
-        let prankActive = false;
+        let audioCtx, alarmInterval, prankActive = false, victimName = "";
 
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-        }
+        // --- AUDIO ---
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
         function playBeep() {
             if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'square';
-            osc.frequency.setValueAtTime(800 + Math.random() * 400, audioCtx.currentTime); 
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(800 + Math.random() * 400, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.05);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
         }
 
         function playSiren() {
             if (!audioCtx) return;
-            function triggerSirenCycle() {
+            function triggerSiren() {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(400, audioCtx.currentTime);
                 osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.4);
                 osc.frequency.linearRampToValueAtTime(400, audioCtx.currentTime + 0.8);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.8);
+                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.8);
             }
-            triggerSirenCycle();
-            alarmInterval = setInterval(triggerSirenCycle, 850);
+            triggerSiren(); alarmInterval = setInterval(triggerSiren, 850);
         }
 
-        // --- SEQUENCE LOGIC ---
-        document.getElementById('start-btn').addEventListener('click', function() {
+        // --- LOGIC ---
+        document.getElementById('start-btn').addEventListener('click', function () {
+            victimName = document.getElementById('user-name-input').value.trim();
+            if (!victimName) return alert("Please enter your name!");
+
+            document.getElementById('inv-name').innerText = victimName;
+            document.getElementById('fun-name').innerText = victimName.toUpperCase();
+
             initAudio();
-            
-            // Mobile-friendly fullscreen request
             let docEl = document.documentElement;
-            let requestFullScreen = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-            if (requestFullScreen) requestFullScreen.call(docEl).catch(err => console.log(err));
+            if (docEl.requestFullscreen) docEl.requestFullscreen().catch(() => { });
 
-            this.innerText = "Verifying... ⏳";
-            this.style.background = "#555";
-            this.disabled = true;
-            document.getElementById('bait-text').innerText = "Connection Established. 👁️";
+            this.disabled = true; this.innerText = "Verifying...";
             prankActive = true;
-
-            setTimeout(startHackingSequence, 2000);
+            setTimeout(startHacking, 2000);
         });
 
-        function startHackingSequence() {
+        function startHacking() {
             document.getElementById('bait-screen').classList.add('hidden');
-            document.getElementById('hacker-overlay').classList.remove('hidden');
 
-            const fakeIP = `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-            const hackLines = [
-                `> TARGET ACQUIRED: IP ${fakeIP} 🎯`,
-                "> Bypassing primary firewall... 🛡️",
-                "> Injecting payload into root directory... 🕷️",
-                "> Accessing connected cameras... 📸",
-                "> Decrypting saved passwords... 🔓",
-                "> Extracting user files... 💸"
+            const hackerOverlay = document.getElementById('hacker-overlay');
+            hackerOverlay.classList.remove('hidden');
+            hackerOverlay.classList.add('flash-bang'); // Trigger the chaotic background flash
+
+            const lines = [
+                `> TARGET: ${victimName.toUpperCase()}`,
+                `> PORT MAPPED: ${Math.floor(Math.random() * 60000)}`,
+                "> Infiltrating root directory...",
+                "> Local files found. Executing extraction...",
+                "> Accessing connected hardware logs..."
             ];
-
-            const terminalOutput = document.getElementById('terminal-output');
-            let lineIndex = 0;
-
-            function typeLine() {
-                if (lineIndex < hackLines.length && prankActive) {
-                    terminalOutput.innerHTML += hackLines[lineIndex] + "<br><br>";
-                    playBeep(); 
-                    lineIndex++;
-                    setTimeout(typeLine, Math.random() * 500 + 400); 
-                } else if (prankActive) {
-                    startProgressBar();
+            let i = 0;
+            const out = document.getElementById('terminal-output');
+            const type = setInterval(() => {
+                if (i < lines.length && prankActive) {
+                    out.innerHTML += lines[i] + "<br><br>";
+                    playBeep(); i++;
+                } else {
+                    clearInterval(type); if (prankActive) startBar();
                 }
-            }
-            typeLine(); 
+            }, 800);
         }
 
-        function startProgressBar() {
+        function startBar() {
             document.getElementById('progress-wrapper').classList.remove('hidden');
-            let progress = 0;
+            let p = 0;
             const bar = document.getElementById('progress-bar');
             const status = document.getElementById('status-msg');
-
-            const interval = setInterval(() => {
-                if (!prankActive) {
-                    clearInterval(interval);
-                    return;
-                }
-                
-                progress += Math.floor(Math.random() * 8) + 1;
-                if (progress > 100) progress = 100;
-
-                bar.style.width = progress + "%";
-                status.innerText = `DATA EXTRACTION: ${progress}% 🚨`;
-                playBeep(); 
-
-                if (progress === 100) {
-                    clearInterval(interval);
-                    setTimeout(revealTruth, 1200); 
-                }
-            }, 100); 
+            const iv = setInterval(() => {
+                if (!prankActive) return clearInterval(iv);
+                p += Math.floor(Math.random() * 8) + 1;
+                if (p >= 100) { p = 100; clearInterval(iv); setTimeout(reveal, 1000); }
+                bar.style.width = p + "%";
+                status.innerText = `DATA TRANSFER FOR ${victimName.toUpperCase()}: ${p}%`;
+                playBeep();
+            }, 150);
         }
 
-        function revealTruth() {
-            if(!prankActive) return;
+        function reveal() {
+            if (!prankActive) return;
             document.getElementById('hacker-overlay').classList.add('hidden');
             document.getElementById('reveal-screen').classList.remove('hidden');
-            playSiren(); 
+            playSiren();
         }
 
-        // The final prank end button
-        document.getElementById('glitch-box').addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent this click from counting towards the panic tap
-            endPrank(false);
-            alert("GOTCHA! 🤡 You've been pranked. Don't worry, your device is fine. 🤣");
-            location.reload(); 
-        });
+        function createSmilesRain() {
+            const container = document.getElementById('funny-screen');
+            const emojis = ['😂', '🤡', '🤣', '😜', '🤭', '🎉'];
 
-        // --- HIDDEN LOOPHOLES (MOBILE & DESKTOP) ---
+            for (let i = 0; i < 60; i++) {
+                let smile = document.createElement('div');
+                smile.className = 'falling-smile';
+                smile.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+
+                // Randomize positions, sizes, and animation durations
+                smile.style.left = Math.random() * 100 + 'vw';
+                smile.style.fontSize = (Math.random() * 2 + 1.5) + 'rem';
+                smile.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                smile.style.animationDelay = (Math.random() * 2) + 's';
+
+                container.appendChild(smile);
+            }
+        }
 
         function endPrank(isSecret) {
             prankActive = false;
             clearInterval(alarmInterval);
-            
-            let doc = window.document;
-            let exitFullScreen = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
-            if (exitFullScreen && document.fullscreenElement) exitFullScreen.call(doc).catch(err => console.log(err));
+            if (document.exitFullscreen) document.exitFullscreen().catch(() => { });
+
+            document.getElementById('hacker-overlay').classList.add('hidden');
+            document.getElementById('reveal-screen').classList.add('hidden');
 
             if (isSecret) {
-                playBeep();
-                alert("TERMINAL OVERRIDE GRANTED. Welcome back, Admin. 👑");
-                document.body.style.filter = "hue-rotate(90deg) invert(1)"; 
+                document.getElementById('invoice-screen').classList.remove('hidden');
+            } else {
+                document.getElementById('funny-screen').classList.remove('hidden');
+                createSmilesRain(); // Trigger the raining smiles
             }
         }
 
-        // 1. DESKTOP: Keyboard Panic
-        let inputBuffer = "";
-        document.addEventListener('keydown', (e) => {
-            if (!prankActive) return;
-            
-            if (e.key === "Escape") inputBuffer += "ESC"; 
-            else if (e.key.length === 1) inputBuffer += e.key.toUpperCase(); 
-
-            if (inputBuffer.includes("ESCESCESC") || inputBuffer.includes("STOP") || inputBuffer.includes("EXIT") || inputBuffer.includes("HELP")) {
-                endPrank(true);
-                inputBuffer = ""; 
-            }
-            if (inputBuffer.length > 15) inputBuffer = inputBuffer.substring(1);
+        document.getElementById('glitch-box').addEventListener('click', (e) => {
+            e.stopPropagation(); endPrank(false);
         });
 
-        // 2. MOBILE: Screen Panic Tap Detector
-        let tapTimes = [];
+        // Loophole Listeners
+        let buffer = "";
+        document.addEventListener('keydown', (e) => {
+            if (!prankActive) return;
+            buffer += (e.key === "Escape" ? "ESC" : e.key.toUpperCase());
+            if (buffer.includes("ESCESCESC") || buffer.includes("HELP") || buffer.includes("STOP")) endPrank(true);
+            if (buffer.length > 15) buffer = buffer.substring(1);
+        });
+
+        let taps = [];
         document.addEventListener('click', (e) => {
-            // Ignore the initial start button
-            if (!prankActive || e.target.id === 'start-btn') return;
-
+            if (!prankActive || ['start-btn', 'user-name-input'].includes(e.target.id)) return;
             const now = Date.now();
-            tapTimes.push(now);
-
-            // Keep only the last 5 taps in memory
-            if (tapTimes.length > 5) {
-                tapTimes.shift(); // Remove the oldest tap
-            }
-
-            // If 5 taps happen within 2000 milliseconds (2 seconds)...
-            if (tapTimes.length === 5 && (now - tapTimes[0] < 2000)) {
-                endPrank(true);
-                tapTimes = []; // Reset the tracker
-            }
+            taps.push(now);
+            if (taps.length > 5) taps.shift();
+            if (taps.length === 5 && (now - taps[0] < 2000)) endPrank(true);
         });
     </script>
 </body>
+
 </html>
