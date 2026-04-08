@@ -65,7 +65,6 @@
             text-shadow: 0 0 5px #0f0;
         }
 
-        /* CRT Scanline Effect */
         #hacker-overlay::after {
             content: " ";
             display: block;
@@ -101,9 +100,7 @@
             box-shadow: 0 0 15px #0f0;
         }
 
-        .cursor {
-            animation: blink 1s infinite;
-        }
+        .cursor { animation: blink 1s infinite; }
 
         @keyframes blink {
             0%, 100% { opacity: 1; }
@@ -201,21 +198,79 @@
     </div>
 
     <script>
+        // --- AUDIO ENGINE ---
+        let audioCtx;
+        let alarmInterval;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Generates a high-tech "blip" for typing and progress
+        function playBeep() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            // Randomize pitch slightly for a cool tech sound
+            osc.frequency.setValueAtTime(800 + Math.random() * 400, audioCtx.currentTime); 
+            
+            // Short, punchy volume envelope
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        // Generates a blaring emergency siren
+        function playSiren() {
+            if (!audioCtx) return;
+            
+            function triggerSirenCycle() {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                
+                // Modulate pitch up and down
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.4);
+                osc.frequency.linearRampToValueAtTime(400, audioCtx.currentTime + 0.8);
+                
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.8);
+            }
+
+            // Play once immediately, then loop
+            triggerSirenCycle();
+            alarmInterval = setInterval(triggerSirenCycle, 850);
+        }
+        // --------------------
+
         // Start the sequence when the button is clicked
         document.getElementById('start-btn').addEventListener('click', function() {
-            // Force Fullscreen for maximum panic!
+            // 1. Initialize the audio context (requires this user click!)
+            initAudio();
+
+            // 2. Force Fullscreen
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().catch(err => console.log(err));
             }
 
-            // Change button text to build suspense
             this.innerText = "Verifying... ⏳";
             this.style.background = "#555";
             this.disabled = true;
             document.getElementById('bait-text').innerText = "Connection Established. 👁️";
 
-            // Wait 2.5 seconds, then drop the payload
-            setTimeout(startHackingSequence, 2500);
+            setTimeout(startHackingSequence, 2000);
         });
 
         function startHackingSequence() {
@@ -236,20 +291,17 @@
             const terminalOutput = document.getElementById('terminal-output');
             let lineIndex = 0;
 
-            // Typewriter effect function
             function typeLine() {
                 if (lineIndex < hackLines.length) {
                     terminalOutput.innerHTML += hackLines[lineIndex] + "<br><br>";
+                    playBeep(); // PLAY BEEP ON EVERY LINE
                     lineIndex++;
-                    // Random delay between 400ms and 900ms for realistic typing feel
                     setTimeout(typeLine, Math.random() * 500 + 400); 
                 } else {
-                    // Start the progress bar once typing is done
                     startProgressBar();
                 }
             }
-            
-            typeLine(); // Kick off the typing
+            typeLine(); 
         }
 
         function startProgressBar() {
@@ -259,65 +311,64 @@
             const status = document.getElementById('status-msg');
 
             const interval = setInterval(() => {
-                // Random jumps in progress
                 progress += Math.floor(Math.random() * 8) + 1;
                 if (progress > 100) progress = 100;
 
                 bar.style.width = progress + "%";
                 status.innerText = `DATA EXTRACTION: ${progress}% 🚨`;
+                
+                playBeep(); // PLAY BEEP AS PROGRESS MOVES
 
                 if (progress === 100) {
                     clearInterval(interval);
-                    setTimeout(revealTruth, 1200); // Hang at 100% for an agonizing 1.2 seconds
+                    setTimeout(revealTruth, 1200); 
                 }
-            }, 100); // Faster interval for more intense buildup
+            }, 100); 
         }
 
         function revealTruth() {
             document.getElementById('hacker-overlay').classList.add('hidden');
             document.getElementById('reveal-screen').classList.remove('hidden');
+            
+            playSiren(); // TRIGGER THE SIREN ALARM!
         }
 
         // The final prank button
         document.getElementById('glitch-box').addEventListener('click', () => {
-            // Exit fullscreen to show it's over
-            if (document.exitFullscreen) {
-                document.exitFullscreen().catch(err => console.log(err));
-            }
+            if (document.exitFullscreen) { document.exitFullscreen().catch(err => console.log(err)); }
+            clearInterval(alarmInterval); // Stop the siren
             alert("GOTCHA! 🤡 You've been pranked. Don't worry, your computer is fine. 🤣");
             location.reload(); 
         });
 
-        // HIDDEN LAYER: Detect Panic Reactions (The Catchable Easter Egg)
+        // HIDDEN LAYER: Detect Panic Reactions
         let inputBuffer = "";
         
         document.addEventListener('keydown', (e) => {
-            // 1. Log the keys (Ignore single modifier keys to prevent breaking the flow)
             if (e.key === "Escape") {
-                inputBuffer += "ESC"; // Special tag for the escape key
+                inputBuffer += "ESC"; 
             } else if (e.key.length === 1) {
-                inputBuffer += e.key.toUpperCase(); // Regular typing
+                inputBuffer += e.key.toUpperCase(); 
             }
 
-            // 2. The Catchable Triggers
-            // Checks if they mashed Escape 3 times, or typed a desperate command
             if (
                 inputBuffer.includes("ESCESCESC") || 
                 inputBuffer.includes("STOP") || 
                 inputBuffer.includes("EXIT") || 
                 inputBuffer.includes("HELP")
             ) {
+                clearInterval(alarmInterval); // Stop the siren if they escape!
+                playBeep(); // Play a confirmation beep
+                
                 alert("TERMINAL OVERRIDE GRANTED. Welcome back, Admin. 👑");
                 document.body.style.filter = "hue-rotate(90deg) invert(1)"; 
-                inputBuffer = ""; // Clear buffer so it doesn't trigger twice
+                inputBuffer = ""; 
                 
-                // Optional: Exit fullscreen for them if they cracked the code
                 if (document.exitFullscreen) {
                     document.exitFullscreen().catch(err => console.log(err));
                 }
             }
 
-            // 3. Keep the memory buffer short to maintain performance
             if (inputBuffer.length > 15) {
                 inputBuffer = inputBuffer.substring(1);
             }
